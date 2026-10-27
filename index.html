@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- CSP lives here so it travels with the page on any static host. Every style
+     and script is a same-origin file and the markup carries no style="" or
+     on* attributes, which is what lets style-src and script-src stay at 'self'.
+     frame-ancestors is ignored inside a meta tag, so clickjacking protection
+     comes from the _headers file on hosts that read it. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0E1116">
+<title>Depth: defence in depth, made visible</title>
+<meta name="description" content="Explore defence in depth across on-premises, cloud and hybrid estates. Inspect twelve vendor-neutral controls, trace attack journeys and switch a layer off to see what still holds.">
+<meta name="author" content="Saleem Yousaf">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Depth: defence in depth, made visible">
+<meta property="og:url" content="https://saleemyousaf.co.uk/depth/">
+<meta property="og:description" content="Twelve vendor-neutral security controls across on-premises, cloud and hybrid. Switch a layer off and see what still holds.">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://saleemyousaf.co.uk/depth/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#explorer">Skip to the explorer</a>
+<div class="wrap">
+
+<header class="site-header">
+  <a class="brand" href="#top" aria-label="Depth, back to top">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="3" y="3" width="20" height="20" rx="3"/><rect x="8" y="8" width="10" height="10" rx="2"/></svg>depth</a>
+  <nav class="site-nav" aria-label="Main">
+    <a href="#explorer">Architecture explorer</a>
+    <a href="#principles">Design principles</a>
+    <a href="#about">About this lab</a>
+  </nav>
+  <a class="byline" href="https://saleemyousaf.co.uk" rel="author">By Saleem Yousaf</a>
+</header>
+
+<main id="top">
+<section class="intro">
+  <div class="intro-copy">
+    <p class="eyebrow eyebrow-accent">DEFENCE IN DEPTH / INTERACTIVE FIELD GUIDE</p>
+    <h1>One layer is never enough.</h1>
+    <p class="lede">Follow a request from the edge to recovery across on-premises, cloud and hybrid estates. Then switch a layer off and see which of the others still holds.</p>
+  </div>
+  <p class="intro-meta">12 controls · 3 environments<br>No vendors, no tracking</p>
+</section>
+
+<section id="explorer" class="explorer" aria-labelledby="canvasTitle">
+  <div class="explorer-bar">
+    <p class="eyebrow">ARCHITECTURE EXPLORER</p>
+    <div class="segmented" role="group" aria-label="Environment">
+      <button type="button" data-env="onprem" aria-pressed="false">On-premises</button>
+      <button type="button" data-env="cloud" aria-pressed="true">Cloud</button>
+      <button type="button" data-env="hybrid" aria-pressed="false">Hybrid</button>
+    </div>
+    <button type="button" class="text-btn" id="reset">Reset view</button>
+  </div>
+
+  <div class="explorer-body">
+    <nav class="layers" aria-label="Defence layers">
+      <button type="button" id="overview" class="layer-btn layer-overview" aria-pressed="true">Full architecture</button>
+      <div id="controls"></div>
+    </nav>
+
+    <div class="centre">
+      <div class="canvas-heading">
+        <div>
+          <p class="eyebrow" id="contextLabel">CLOUD / REFERENCE ARCHITECTURE</p>
+          <h2 id="canvasTitle">A connected system of defence</h2>
+        </div>
+        <p class="tag" id="canvasTag">12 layers working together</p>
+      </div>
+      <p class="flow-hint" id="flowHint">Select a component to inspect it.</p>
+      <div id="diagram" class="diagram"></div>
+
+      <div class="legend" aria-label="Diagram key">
+        <span><svg width="24" height="8" aria-hidden="true"><line x1="0" y1="4" x2="24" y2="4" class="k-flow"/></svg>Data path</span>
+        <span><svg width="24" height="8" aria-hidden="true"><line x1="0" y1="4" x2="24" y2="4" class="k-tele"/></svg>Security telemetry</span>
+        <span><svg width="18" height="14" aria-hidden="true"><rect x="1" y="1" width="16" height="12" rx="3" class="k-bound"/></svg>Trust boundary</span>
+        <span><svg width="18" height="14" aria-hidden="true"><rect x="1" y="1" width="16" height="12" rx="3" class="k-gap"/></svg>Switched off</span>
+      </div>
+
+      <div class="journey">
+        <p class="eyebrow">TRACE A JOURNEY</p>
+        <div class="journey-controls">
+          <label class="journey-label" id="scenarioWrap">Journey
+            <select id="scenario">
+              <option value="normal">Authorised request</option>
+              <option value="identity">Stolen password</option>
+              <option value="injection">Malicious input</option>
+              <option value="ransomware">Ransomware event</option>
+            </select>
+          </label>
+          <button type="button" id="play" class="primary">Trace flow</button>
+        </div>
+        <div id="traceResult" class="result" aria-live="polite">
+          <span class="result-label" id="resultLabel">READY</span>
+          <span class="result-text" id="resultText">Choose a journey and trace how the layers respond.</span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="inspector" id="inspector" aria-labelledby="detailTitle" tabindex="-1">
+      <h2 class="eyebrow inspector-kicker">ARCHITECTURE NOTES</h2>
+      <h3 id="detailTitle" aria-live="polite">Cloud, with intent.</h3>
+      <p id="detailText" class="detail-text"></p>
+      <button type="button" id="nodeGap" class="gap-btn" hidden aria-pressed="false">Switch this component off</button>
+      <div class="detail-section">
+        <h4 class="eyebrow">WHAT GOOD LOOKS LIKE</h4>
+        <ul id="goodList" class="good-list"></ul>
+      </div>
+      <div class="detail-section">
+        <h4 class="eyebrow">TOOLING CATEGORIES</h4>
+        <div id="toolTags" class="chips"></div>
+      </div>
+      <div class="callout" id="calloutBox">
+        <span class="eyebrow" id="calloutLabel">WORTH KNOWING</span>
+        <span id="callout"></span>
+      </div>
+      <button type="button" class="secondary" id="download">Download design checklist (.txt)</button>
+      <a class="back-link" href="#diagram">Back to the diagram</a>
+    </aside>
+  </div>
+</section>
+
+<section id="principles" class="principles" aria-labelledby="principlesTitle">
+  <p class="eyebrow">SAME PRINCIPLES, DIFFERENT BOUNDARIES</p>
+  <h2 id="principlesTitle">Location changes the implementation, not the need.</h2>
+  <div class="cards">
+    <article class="card">
+      <p class="eyebrow">01 / ON-PREMISES</p>
+      <h3>Control the estate.</h3>
+      <p>Separate the edge, workloads and data. Keep administration on its own network and protect the hardware itself.</p>
+      <button type="button" class="card-link" data-switch="onprem">Explore on-premises</button>
+    </article>
+    <article class="card">
+      <p class="eyebrow">02 / CLOUD</p>
+      <h3>Identity is the perimeter.</h3>
+      <p>Private workloads, short-lived identities and policy as code. Write down who owns each side of the service boundary.</p>
+      <button type="button" class="card-link" data-switch="cloud">Explore cloud</button>
+    </article>
+    <article class="card">
+      <p class="eyebrow">03 / HYBRID</p>
+      <h3>Join systems, keep boundaries.</h3>
+      <p>Federate identity and encrypt the interconnect. A private route gives reachability; it does not grant trust.</p>
+      <button type="button" class="card-link" data-switch="hybrid">Explore hybrid</button>
+    </article>
+  </div>
+
+  <details class="review" open>
+    <summary>Architecture review: the questions worth asking<svg class="summary-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8 H14"/><path class="plus-bar" d="M8 2 V14"/></svg></summary>
+    <div class="review-grid">
+      <div><h3>01 Know your assets</h3><p>Map owners, data sensitivity, dependencies and trust boundaries before choosing controls.</p></div>
+      <div><h3>02 Plan for compromise</h3><p>Limit lateral movement, separate administration and make security logs hard to tamper with.</p></div>
+      <div><h3>03 Prove recovery</h3><p>Agree recovery time and point objectives, then restore into an isolated environment to prove them.</p></div>
+      <div><h3>04 Test the design</h3><p>Threat model the real flows and rehearse incident response. A diagram is where review starts.</p></div>
+    </div>
+  </details>
+</section>
+
+<section id="about" class="about" aria-labelledby="aboutTitle">
+  <div>
+    <p class="eyebrow">ABOUT THIS LAB</p>
+    <h2 id="aboutTitle">Simplified on purpose.</h2>
+  </div>
+  <div class="about-copy">
+    <p>These flows are teaching models with the vendor names stripped out, so the reasoning carries across estates. They are not a design approval or a live assessment.</p>
+    <p>Built and maintained by Saleem Yousaf, cloud and cyber security architect and director of Cyber Spartans Ltd. Nothing you click here leaves your browser.</p>
+    <p class="about-links"><a href="https://saleemyousaf.co.uk">saleemyousaf.co.uk</a><a href="https://cyberspartans.co.uk">cyberspartans.co.uk</a></p>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <span>Learning reference. Not a production design approval.</span>
+  <span class="footer-links"><a href="https://www.nist.gov/publications/zero-trust-architecture" rel="noopener">NIST SP 800-207</a><a href="https://www.ncsc.gov.uk/collection/cloud/the-cloud-security-principles" rel="noopener">NCSC cloud principles</a></span>
+</footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
